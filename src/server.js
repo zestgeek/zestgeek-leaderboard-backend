@@ -25,6 +25,15 @@ app.post(
     }
 )
 
+app.get(
+    '/users', (req, res) => {
+        db.table('users').get().then(
+            records =>
+                res.status(200).json(records)
+        )
+    }
+)
+
 app.listen(
     PORT, () => console.log('Hurray APIs are live....')
 )
