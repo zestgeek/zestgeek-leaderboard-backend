@@ -13,15 +13,31 @@ app.use(bodyParser.urlencoded({ extended: true }))
 
 app.post(
     '/auth', (req, res) => {
-        const newUser = {
-            ...req.body,
-            _id: uuidv1(),
-            joinedDate: new Date()
-        }
 
-        db.table('users').create(newUser)
+        db.table('users').find({
+            githubToken: req.body.user.githubToken
+        }).then(
+            records => {
+                let userToSend = null
 
-        res.status(200).json(newUser)
+                if (records.length) {
+                    userToSend = records[0]
+
+                } else {
+                    const newUser = {
+                        ...req.body.user,
+                        _id: uuidv1(),
+                        joinedDate: new Date()
+                    }
+            
+                    db.table('users').create(newUser)
+            
+                    userToSend = newUser
+                }
+
+                res.status(200).json(userToSend)
+            }
+        )
     }
 )
 
